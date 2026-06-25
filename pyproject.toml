@@ -1,0 +1,106 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "claude-codebase-analyzer"
+version = "1.0.0"
+description = "MCP server that extends Claude Desktop with codebase architecture analysis (dependency graphs, circular-dependency detection, risk scoring, CI/CD workflow mapping)."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Sourabh Jha" }]
+keywords = ["mcp", "claude", "codebase", "analysis", "tree-sitter", "dependency-graph"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+]
+
+dependencies = [
+    "mcp>=1.0.0",
+    "tree-sitter>=0.21.0",
+    "tree-sitter-go>=0.21.0",
+    "tree-sitter-java>=0.21.0",
+    "tree-sitter-python>=0.21.0",
+    "tree-sitter-typescript>=0.21.0",
+    "networkx>=3.0",
+    "click>=8.0",
+    "colorama>=0.4.6",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "coverage[toml]>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0",
+    "build>=1.0",
+    "twine>=4.0",
+    "types-PyYAML>=6.0",
+]
+analysis = [
+    "radon>=6.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/sourabhjha/claude-codebase-analyzer"
+Repository = "https://github.com/sourabhjha/claude-codebase-analyzer"
+
+[project.scripts]
+claude-analyzer = "claude_codebase_analyzer.cli:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+claude_codebase_analyzer = ["py.typed"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "W", "C4", "SIM"]
+ignore = [
+    "B008",  # function call in default argument (click uses this pattern)
+    "SIM105",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+"test_fixtures/**" = ["E", "F", "B", "UP", "W", "C4", "SIM"]
+# This module is mostly an embedded HTML/CSS/JS template string; line-length
+# rules apply to the host language, not the inlined front-end code.
+"src/claude_codebase_analyzer/reporters/html_viz.py" = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = false
+ignore_missing_imports = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["claude_codebase_analyzer"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false

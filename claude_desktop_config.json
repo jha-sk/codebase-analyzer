@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "codebase-analyzer": {
+      "command": "claude-analyzer",
+      "args": ["server"],
+      "env": {
+        "PROJECT_ROOT": "/path/to/your/project"
+      }
+    }
+  }
+}
